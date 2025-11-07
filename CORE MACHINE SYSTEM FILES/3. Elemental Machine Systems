@@ -1,0 +1,291 @@
+# src/safeway_guardian/elements/wood_mechanical.py
+"""
+🌳 WOOD ELEMENT - Mechanical Systems & Component Health
+Bearings, gears, motors, and moving parts maintenance
+"""
+
+class WoodMechanicalSystem:
+    """🌳 WOOD: Manages mechanical components and moving parts"""
+    
+    def __init__(self):
+        self.mechanical_components = {
+            'bearings': {
+                'wear_threshold': 0.8,
+                'vibration_limit': 4.5,  # mm/s
+                'temperature_limit': 80,  # Celsius
+                'lubrication_interval': 168  # hours
+            },
+            'gears': {
+                'wear_threshold': 0.7,
+                'vibration_limit': 5.0,
+                'backlash_limit': 0.1,  # mm
+                'inspection_interval': 720  # hours
+            },
+            'belts_chains': {
+                'tension_threshold': 0.6,
+                'wear_limit': 0.75,
+                'alignment_tolerance': 0.5,  # mm
+                'replacement_interval': 2000  # hours
+            }
+        }
+    
+    async def analyze_mechanical_health(self, sensor_data: MachineSensorData) -> Dict[str, Any]:
+        """Analyze mechanical system health"""
+        analysis = {
+            'components': {},
+            'overall_score': 100.0,
+            'critical_issues': [],
+            'maintenance_recommendations': []
+        }
+        
+        # Bearing health analysis
+        bearing_health = await self._analyze_bearings(sensor_data)
+        analysis['components']['bearings'] = bearing_health
+        
+        # Gear health analysis
+        gear_health = await self._analyze_gears(sensor_data)
+        analysis['components']['gears'] = gear_health
+        
+        # Vibration analysis
+        vibration_analysis = await self._analyze_vibration(sensor_data.vibration)
+        analysis['vibration_health'] = vibration_analysis
+        
+        # Calculate overall mechanical health score
+        analysis['overall_score'] = await self._calculate_mechanical_score(analysis)
+        
+        return analysis
+    
+    async def _analyze_bearings(self, sensor_data: MachineSensorData) -> Dict[str, Any]:
+        """Analyze bearing health based on vibration and temperature"""
+        health_score = 100.0
+        
+        # Vibration analysis
+        if sensor_data.vibration > self.mechanical_components['bearings']['vibration_limit']:
+            health_score -= 30
+        
+        # Temperature analysis
+        if sensor_data.temperature > self.mechanical_components['bearings']['temperature_limit']:
+            health_score -= 25
+        
+        return {
+            'health_score': max(0, health_score),
+            'vibration_status': 'CRITICAL' if sensor_data.vibration > 4.5 else 'NORMAL',
+            'temperature_status': 'CRITICAL' if sensor_data.temperature > 80 else 'NORMAL',
+            'maintenance_needed': health_score < 70
+        }
+    
+    async def generate_mechanical_tasks(self, machine_id: str, health_analysis: Dict) -> List[MaintenanceTask]:
+        """Generate mechanical maintenance tasks"""
+        tasks = []
+        
+        if health_analysis['elemental_analysis']['wood_health']['components']['bearings']['maintenance_needed']:
+            tasks.append(
+                MaintenanceTask(
+                    task_id=f"BEARING-MT-{int(time.time())}",
+                    machine_id=machine_id,
+                    task_type=MaintenanceType.PREDICTIVE,
+                    element="WOOD",
+                    description="Bearing inspection and lubrication",
+                    priority=7,
+                    estimated_duration=60,
+                    required_parts=["bearing_grease", "cleaning_solvent"],
+                    safety_procedures=["Lockout/Tagout", "Machine cooling"],
+                    skill_level="INTERMEDIATE"
+                )
+            )
+        
+        return tasks
+
+# src/safeway_guardian/elements/fire_operational.py
+"""
+🔥 FIRE ELEMENT - Operational Monitoring & Performance
+Efficiency, output quality, and operational parameters
+"""
+
+class FireOperationalSystem:
+    """🔥 FIRE: Manages operational performance and efficiency"""
+    
+    def __init__(self):
+        self.performance_metrics = {
+            'efficiency_threshold': 0.85,  # 85% efficiency
+            'quality_threshold': 0.95,     # 95% quality
+            'throughput_threshold': 0.90,  # 90% of target
+            'energy_efficiency_threshold': 0.80  # 80% energy efficiency
+        }
+    
+    async def analyze_operational_performance(self, sensor_data: MachineSensorData) -> Dict[str, Any]:
+        """Analyze operational performance and efficiency"""
+        analysis = {
+            'efficiency_score': await self._calculate_efficiency(sensor_data),
+            'quality_score': await self._estimate_quality(sensor_data),
+            'throughput_score': await self._calculate_throughput(sensor_data),
+            'energy_efficiency': await self._calculate_energy_efficiency(sensor_data),
+            'operational_issues': []
+        }
+        
+        # Check for operational anomalies
+        if sensor_data.current > (sensor_data.voltage * 0.1):  # Simplified power check
+            analysis['operational_issues'].append("High power consumption")
+        
+        if sensor_data.rpm < sensor_data.load_percentage * 10:  # Simplified RPM check
+            analysis['operational_issues'].append("RPM below expected for load")
+        
+        analysis['overall_score'] = await self._calculate_operational_score(analysis)
+        
+        return analysis
+    
+    async def _calculate_efficiency(self, sensor_data: MachineSensorData) -> float:
+        """Calculate machine operational efficiency"""
+        # Simplified efficiency calculation
+        base_efficiency = 0.95  # 95% efficient at optimal conditions
+        
+        # Reduce efficiency based on deviations from optimal
+        temp_penalty = max(0, (sensor_data.temperature - 60) / 40) * 0.2  # Up to 20% penalty
+        vibration_penalty = max(0, (sensor_data.vibration - 2) / 8) * 0.15  # Up to 15% penalty
+        load_penalty = max(0, abs(sensor_data.load_percentage - 80) / 20) * 0.1  # Optimal at 80% load
+        
+        efficiency = base_efficiency - temp_penalty - vibration_penalty - load_penalty
+        return max(0.5, efficiency)  # Minimum 50% efficiency
+
+# src/safeway_guardian/elements/earth_structural.py
+"""
+🌍 EARTH ELEMENT - Structural Integrity & Foundation
+Machine frame, foundation, mounts, and structural components
+"""
+
+class EarthStructuralSystem:
+    """🌍 EARTH: Manages structural integrity and foundation"""
+    
+    def __init__(self):
+        self.structural_components = {
+            'frame_integrity': {'inspection_interval': 8760},  # hours (1 year)
+            'foundation': {'settlement_tolerance': 0.5},  # mm
+            'mounts_bolts': {'torque_check_interval': 2160},  # hours (3 months)
+            'alignment': {'tolerance': 0.1}  # mm
+        }
+    
+    async def analyze_structural_integrity(self, sensor_data: MachineSensorData) -> Dict[str, Any]:
+        """Analyze structural integrity and foundation"""
+        analysis = {
+            'vibration_analysis': await self._analyze_structural_vibration(sensor_data.vibration),
+            'foundation_stability': await self._assess_foundation_stability(sensor_data),
+            'frame_integrity': await self._assess_frame_integrity(sensor_data),
+            'alignment_status': await self._check_alignment(sensor_data)
+        }
+        
+        analysis['overall_score'] = await self._calculate_structural_score(analysis)
+        
+        return analysis
+
+# src/safeway_guardian/elements/metal_protective.py
+"""
+🔒 METAL ELEMENT - Protective Systems & Safety
+Guards, safety interlocks, electrical protection, and access control
+"""
+
+class MetalProtectiveSystem:
+    """🔒 METAL: Manages protective systems and safety features"""
+    
+    def __init__(self):
+        self.safety_systems = {
+            'emergency_stop': {'test_interval': 720},  # hours
+            'safety_guards': {'inspection_interval': 2160},  # hours
+            'electrical_protection': {'test_interval': 4320},  # hours
+            'access_control': {'audit_interval': 8760}  # hours
+        }
+    
+    async def analyze_protective_systems(self, sensor_data: MachineSensorData) -> Dict[str, Any]:
+        """Analyze protective systems and safety"""
+        analysis = {
+            'electrical_safety': await self._check_electrical_safety(sensor_data),
+            'safety_interlocks': await self._verify_safety_interlocks(),
+            'emergency_systems': await self._test_emergency_systems(),
+            'access_control': await self._audit_access_control()
+        }
+        
+        analysis['overall_score'] = await self._calculate_protective_score(analysis)
+        analysis['safety_level'] = await self._determine_safety_level(analysis)
+        
+        return analysis
+    
+    async def _check_electrical_safety(self, sensor_data: MachineSensorData) -> Dict[str, Any]:
+        """Check electrical safety parameters"""
+        issues = []
+        
+        # Voltage safety check
+        if sensor_data.voltage > 250 or sensor_data.voltage < 200:  # Example for 220V systems
+            issues.append("Voltage out of safe range")
+        
+        # Current safety check
+        if sensor_data.current > 15:  # Example threshold
+            issues.append("Current above safe limit")
+        
+        # Grounding check (simulated)
+        grounding_ok = await self._simulate_grounding_check()
+        if not grounding_ok:
+            issues.append("Grounding issue detected")
+        
+        return {
+            'status': 'SAFE' if not issues else 'UNSAFE',
+            'issues': issues,
+            'score': 100 if not issues else 40
+        }
+
+# src/safeway_guardian/elements/water_fluidic.py
+"""
+💧 WATER ELEMENT - Fluid Systems & Lubrication
+Cooling, lubrication, hydraulics, and fluid management
+"""
+
+class WaterFluidicSystem:
+    """💧 WATER: Manages fluid systems, lubrication, and cooling"""
+    
+    def __init__(self):
+        self.fluid_systems = {
+            'lubrication': {
+                'oil_quality_threshold': 70,
+                'oil_level_threshold': 0.8,
+                'filter_change_interval': 2000  # hours
+            },
+            'cooling': {
+                'temperature_threshold': 75,
+                'flow_rate_threshold': 0.7,
+                'pressure_threshold': 0.8
+            },
+            'hydraulics': {
+                'pressure_threshold': 0.9,
+                'leak_detection_threshold': 0.1,
+                'fluid_quality_threshold': 80
+            }
+        }
+    
+    async def analyze_fluid_systems(self, sensor_data: MachineSensorData) -> Dict[str, Any]:
+        """Analyze fluid systems and lubrication"""
+        analysis = {
+            'lubrication_system': await self._analyze_lubrication(sensor_data),
+            'cooling_system': await self._analyze_cooling(sensor_data),
+            'hydraulic_system': await self._analyze_hydraulics(sensor_data),
+            'fluid_quality': await self._assess_fluid_quality(sensor_data)
+        }
+        
+        analysis['overall_score'] = await self._calculate_fluid_score(analysis)
+        
+        return analysis
+    
+    async def _analyze_lubrication(self, sensor_data: MachineSensorData) -> Dict[str, Any]:
+        """Analyze lubrication system health"""
+        lubrication_score = 100.0
+        
+        if sensor_data.oil_quality and sensor_data.oil_quality < self.fluid_systems['lubrication']['oil_quality_threshold']:
+            lubrication_score -= 40
+        
+        # Temperature affects lubrication effectiveness
+        if sensor_data.temperature > 80:
+            lubrication_score -= 20
+        
+        return {
+            'score': max(0, lubrication_score),
+            'status': 'GOOD' if lubrication_score > 70 else 'POOR',
+            'maintenance_needed': lubrication_score < 70,
+            'recommendation': 'Oil change needed' if lubrication_score < 70 else 'Normal'
+        }
