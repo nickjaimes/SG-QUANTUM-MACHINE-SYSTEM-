@@ -1,0 +1,80 @@
+# src/safeway_guardian/machine_system/machine_security.py
+"""
+🔒 MACHINE SECURITY ORCHESTRATOR
+Industrial control system security and safety protection
+"""
+
+class MachineSecurityOrchestrator:
+    """Comprehensive security for industrial control systems"""
+    
+    def __init__(self):
+        self.security_layers = {
+            'network_security': IndustrialNetworkSecurity(),
+            'physical_security': PhysicalAccessControl(),
+            'safety_systems': SafetySystemManager(),
+            'data_protection': IndustrialDataProtection()
+        }
+        self.security_policies = self._load_industrial_security_policies()
+    
+    async def perform_industrial_security_audit(self, machine_id: str) -> Dict[str, Any]:
+        """Perform comprehensive industrial security audit"""
+        security_report = {
+            'machine_id': machine_id,
+            'timestamp': datetime.now(),
+            'network_security': {},
+            'physical_security': {},
+            'safety_systems': {},
+            'data_integrity': {},
+            'compliance_status': {},
+            'overall_security_score': 0.0
+        }
+        
+        # Network security assessment
+        network_audit = await self.security_layers['network_security'].audit_network_security(machine_id)
+        security_report['network_security'] = network_audit
+        
+        # Physical security assessment
+        physical_audit = await self.security_layers['physical_security'].audit_physical_access(machine_id)
+        security_report['physical_security'] = physical_audit
+        
+        # Safety systems verification
+        safety_audit = await self.security_layers['safety_systems'].verify_safety_systems(machine_id)
+        security_report['safety_systems'] = safety_audit
+        
+        # Data integrity check
+        data_audit = await self.security_layers['data_protection'].verify_data_integrity(machine_id)
+        security_report['data_integrity'] = data_audit
+        
+        # Calculate overall security score
+        security_report['overall_security_score'] = await self._calculate_security_score(security_report)
+        
+        return security_report
+    
+    async def respond_to_industrial_incident(self, incident_type: str, machine_id: str) -> Dict[str, Any]:
+        """Respond to industrial security or safety incidents"""
+        incident_response = {
+            'incident_id': f"INDUSTRIAL-INCIDENT-{int(time.time())}",
+            'machine_id': machine_id,
+            'type': incident_type,
+            'timestamp': datetime.now(),
+            'response_actions': [],
+            'containment_status': 'IN_PROGRESS',
+            'safety_status': 'UNSAFE'
+        }
+        
+        # Immediate safety actions
+        safety_actions = await self._activate_safety_protocols(incident_type, machine_id)
+        incident_response['response_actions'].extend(safety_actions)
+        
+        # Security containment
+        security_actions = await self._contain_security_breach(incident_type, machine_id)
+        incident_response['response_actions'].extend(security_actions)
+        
+        # System isolation
+        isolation_actions = await self._isolate_affected_systems(machine_id)
+        incident_response['response_actions'].extend(isolation_actions)
+        
+        # Update safety status
+        incident_response['safety_status'] = await self._assess_safety_status(machine_id)
+        
+        return incident_response
