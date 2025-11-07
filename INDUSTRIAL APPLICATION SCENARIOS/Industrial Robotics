@@ -1,0 +1,4 @@
+from safeway_guardian.examples import industrial_robotics
+
+robot_manager = industrial_robotics.RoboticMaintenanceManager()
+robot_health = robot_manager.monitor_robot_fleet(robot_ids)
