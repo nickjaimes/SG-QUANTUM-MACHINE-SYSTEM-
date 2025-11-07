@@ -1,0 +1,9 @@
+# Clone the machine system repository
+git clone https://github.com/nicolas-santiago/sg-quantum-machine-system.git
+cd sg-quantum-machine-system
+
+# Install industrial dependencies
+pip install -r requirements.txt
+
+# Install in development mode
+pip install -e .
