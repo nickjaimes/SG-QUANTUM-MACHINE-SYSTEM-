@@ -1,0 +1,4 @@
+from safeway_guardian.examples import smart_manufacturing
+
+smart_factory = smart_manufacturing.SmartFactoryManager()
+production_optimization = smart_factory.optimize_production_line()
