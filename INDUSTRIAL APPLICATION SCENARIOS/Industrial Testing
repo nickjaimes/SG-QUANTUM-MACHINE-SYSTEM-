@@ -1,0 +1,11 @@
+# Run comprehensive machine tests
+pytest tests/test_machine_core.py
+
+# Test predictive maintenance algorithms
+pytest tests/test_predictive_maintenance.py
+
+# Machine security testing
+pytest tests/test_machine_security.py
+
+# Performance benchmarking
+python -m safeway_guardian.testing.industrial_benchmark
