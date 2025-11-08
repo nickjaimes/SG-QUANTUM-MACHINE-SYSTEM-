@@ -1,0 +1,4 @@
+from safeway_guardian.examples import critical_infrastructure
+
+infrastructure_manager = critical_infrastructure.CriticalInfrastructureMonitor()
+safety_report = infrastructure_manager.monitor_power_plant()
